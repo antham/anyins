@@ -57,3 +57,10 @@
   (should (equal-including-properties (anyins-get-positions "feature.el") '((3 3)(4 4)(5 5))))
   (should (equal-including-properties (anyins-get-positions "whatever") nil))
   )
+
+(ert-deftest anyins-prepare-content-to-insert ()
+  ;; text is splitted at new line
+  (should (equal-including-properties (anyins-prepare-content-to-insert "hello world\nhello world\nhello world") '("hello world" "hello world" "hello world")))
+  (should (equal-including-properties (anyins-prepare-content-to-insert "hello world") '("hello world")))
+  (should (equal-including-properties (anyins-prepare-content-to-insert nil) nil))
+  )

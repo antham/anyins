@@ -49,6 +49,13 @@
   "Get recorded cursor positions"
   (gethash name anyins-buffers-positions)
   )
+
+(defun anyins-prepare-content-to-insert (content)
+  "Transform string to list to be inserted"
+  (when content
+    (split-string content "\n")
+    )
+  )
 (provide 'anyins)
 
 ;; Local Variables:
