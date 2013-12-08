@@ -44,6 +44,11 @@
   "Delete recorded positions for name"
   (remhash name anyins-buffers-positions)
   )
+
+(defun anyins-get-positions (name)
+  "Get recorded cursor positions"
+  (gethash name anyins-buffers-positions)
+  )
 (provide 'anyins)
 
 ;; Local Variables:

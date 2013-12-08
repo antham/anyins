@@ -47,3 +47,13 @@
   (anyins-remove-positions "feature.el")
   (should (equal-including-properties (gethash "feature.el" anyins-buffers-positions) nil))
   )
+
+(ert-deftest anyins-get-positions ()
+  (clrhash anyins-buffers-positions)
+  (puthash "file.el" '((1 1)(2 2)(3 3)) anyins-buffers-positions)
+  (puthash "feature.el" '((3 3)(4 4)(5 5)) anyins-buffers-positions)
+  ;; we get positions from name
+  (should (equal-including-properties (anyins-get-positions "file.el") '((1 1)(2 2)(3 3))))
+  (should (equal-including-properties (anyins-get-positions "feature.el") '((3 3)(4 4)(5 5))))
+  (should (equal-including-properties (anyins-get-positions "whatever") nil))
+  )
