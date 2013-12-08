@@ -20,3 +20,17 @@
 
 (require 'ert)
 (require 'anyins)
+
+(ert-deftest anyins-record-position ()
+  (anyins-record-position 3 42 "file.el")
+  (anyins-record-position 2 32 "file.el")
+  (anyins-record-position 1 22 "file.el")
+  (anyins-record-position 1 45 "file.el")
+  (anyins-record-position 2 26 "file.el")
+  (anyins-record-position 2 67 "feature.el")
+  (anyins-record-position 1 1 "feature.el")
+  (anyins-record-position 1 1 "feature.el")
+  ;; we get an association table with unique positions ordered
+  (should (equal (gethash "file.el" anyins-buffers-positions) '((1 45)(2 26)(3 42))))
+  (should (equal (gethash "feature.el" anyins-buffers-positions) '((1 1)(2 67))))
+  )

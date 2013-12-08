@@ -23,6 +23,22 @@
 
 ;;; Code:
 
+(defvar anyins-buffers-positions (make-hash-table :test 'equal)
+  "Positions recorded in buffers")
+
+(defun anyins-record-position (line offset name)
+  "Record cursor line and offset"
+  (let* ((buffer-positions (gethash name anyins-buffers-positions)))
+    (unless buffer-positions
+      (setq buffer-positions ())
+      )
+    (when (assq line buffer-positions)
+      (setq buffer-positions (assq-delete-all line buffer-positions))
+      )
+    (push (list line offset) buffer-positions)
+    (puthash name (sort buffer-positions (lambda(a b)(< (car a) (car b)))) anyins-buffers-positions)
+    )
+  )
 (provide 'anyins)
 
 ;; Local Variables:
