@@ -39,6 +39,11 @@
     (puthash name (sort buffer-positions (lambda(a b)(< (car a) (car b)))) anyins-buffers-positions)
     )
   )
+
+(defun anyins-remove-positions (name)
+  "Delete recorded positions for name"
+  (remhash name anyins-buffers-positions)
+  )
 (provide 'anyins)
 
 ;; Local Variables:

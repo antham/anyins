@@ -34,3 +34,16 @@
   (should (equal (gethash "file.el" anyins-buffers-positions) '((1 45)(2 26)(3 42))))
   (should (equal (gethash "feature.el" anyins-buffers-positions) '((1 1)(2 67))))
   )
+
+(ert-deftest anyins-remove-positions ()
+  (clrhash anyins-buffers-positions)
+  (puthash "file.el" '((1 1)(2 2)(3 3)) anyins-buffers-positions)
+  (puthash "feature.el" '((3 3)(4 4)(5 5)) anyins-buffers-positions)
+  (anyins-remove-positions "feature.el")
+  ;; delete an entry
+  (should (equal-including-properties (gethash "file.el" anyins-buffers-positions) '((1 1)(2 2)(3 3))))
+  (should (equal-including-properties (gethash "feature.el" anyins-buffers-positions) nil))
+  ;; try to delete entry already deleted
+  (anyins-remove-positions "feature.el")
+  (should (equal-including-properties (gethash "feature.el" anyins-buffers-positions) nil))
+  )
