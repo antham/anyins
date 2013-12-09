@@ -58,6 +58,14 @@
   (should (equal-including-properties (anyins-get-positions "whatever") nil))
   )
 
+(ert-deftest anyins-has-positions ()
+  (clrhash anyins-buffers-positions)
+  (puthash "file.el" '((1 1)(2 2)(3 3)) anyins-buffers-positions)
+  ;; if we have positions it return true, nil otherwise
+  (should (equal-including-properties (anyins-has-positions "file.el") t))
+  (should (equal-including-properties (anyins-has-positions "feature.el") nil))
+  )
+
 (ert-deftest anyins-prepare-content-to-insert ()
   ;; text is splitted at new line
   (should (equal-including-properties (anyins-prepare-content-to-insert "hello world\nhello world\nhello world") '("hello world" "hello world" "hello world")))

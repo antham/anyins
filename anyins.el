@@ -40,6 +40,11 @@
     )
   )
 
+(defun anyins-has-positions (name)
+  "Check if a buffer has recorded positions"
+  (> (length (anyins-get-positions name)) 0)
+  )
+
 (defun anyins-remove-positions (name)
   "Delete recorded positions for name"
   (remhash name anyins-buffers-positions)
