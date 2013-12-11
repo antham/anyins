@@ -61,6 +61,41 @@
     (split-string content "\n")
     )
   )
+
+(defun anyins-goto-position (position)
+  "Move cursor to line at offset"
+  (goto-line (car position))
+  (goto-char (+ (line-beginning-position) (cadr position)))
+  )
+
+(defun anyins-get-current-position ()
+  "Get current cursor position"
+  (list (line-number-at-pos (point)) (- (point) (line-beginning-position)))
+  )
+
+(defun anyins-record-current-position ()
+  "Record current cursor position"
+  (anyins-record-position (anyins-get-current-position) (buffer-name))
+  )
+
+(defun anyins-goto-or-create-position (position)
+  "Create position if it doesn't exist, filling with space to do so"
+  (let* ((end-position nil))
+    (goto-line (car position))
+    (end-of-line)
+    (setq end-position (anyins-get-current-position))
+    (if (<= (cadr position) (cadr end-position))
+        (anyins-goto-position position)
+      (progn
+        (while (> (cadr position) (cadr end-position))
+          (insert " ")
+          (setq end-position (anyins-get-current-position))
+          )
+        )
+      )
+    )
+  )
+
 (provide 'anyins)
 
 ;; Local Variables:
