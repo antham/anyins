@@ -143,6 +143,20 @@
   (anyins-record-current-position)
   )
 
+;;;###autoload
+(defun anyins-insert-kill-ring ()
+  "Insert content of kill-ring at chosen places"
+  (interactive)
+  (anyins-insert (car kill-ring) (buffer-name))
+  )
+
+;;;###autoload
+(defun anyins-insert-shell-command-result (command)
+  "Insert content of shell command result at chosen places"
+  (interactive "Mshell command :")
+  (anyins-insert (shell-command-to-string command) (buffer-name))
+  )
+
 (provide 'anyins)
 
 ;; Local Variables:
