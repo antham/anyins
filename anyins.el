@@ -107,6 +107,35 @@
       )
     )
 
+(defun anyins-insert-from-current-position (rows)
+  "Insert content from current position"
+  (let* ((current-position (anyins-get-current-position))
+         (line (car current-position)))
+    (while (>= (line-number-at-pos (point-max)) line)
+      (anyins-goto-or-create-position (list line (cadr current-position)))
+      (let ((data (pop rows)))
+        (when (char-or-string-p data)
+          (insert data)
+          )
+        )
+      (setq line (+ 1 line))
+      )
+    )
+  )
+
+(defun anyins-insert (content name)
+  "Insert content"
+  (let* ((rows (anyins-prepare-content-to-insert content))
+         (positions (anyins-get-positions name)))
+    (if (and positions rows)
+        (progn
+          (anyins-insert-at-recorded-positions rows positions)
+          (anyins-remove-positions name))
+      (anyins-insert-from-current-position rows)
+      )
+    )
+  )
+
 ;;;###autoload
 (defun anyins-record ()
   "Record current cursor position"
