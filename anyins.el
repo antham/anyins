@@ -96,6 +96,24 @@
     )
   )
 
+(defun anyins-insert-at-recorded-positions (rows positions)
+  "Insert content at each recorded position"
+    (dotimes (i (length positions))
+      (anyins-goto-position (nth i positions))
+      (let ((data (nth i rows)))
+        (when (char-or-string-p data)
+          (insert data))
+        )
+      )
+    )
+
+;;;###autoload
+(defun anyins-record ()
+  "Record current cursor position"
+  (interactive)
+  (anyins-record-current-position)
+  )
+
 (provide 'anyins)
 
 ;; Local Variables:
