@@ -22,48 +22,28 @@
 (require 'anyins)
 
 (ert-deftest anyins-record-position ()
-  (anyins-record-position '(3 42) "file.el")
-  (anyins-record-position '(2 32) "file.el")
-  (anyins-record-position '(1 22) "file.el")
-  (anyins-record-position '(1 45) "file.el")
-  (anyins-record-position '(2 26) "file.el")
-  (anyins-record-position '(2 67) "feature.el")
-  (anyins-record-position '(1 1) "feature.el")
-  (anyins-record-position '(1 1) "feature.el")
-  ;; we get an association table with unique positions ordered
-  (should (equal (gethash "file.el" anyins-buffers-positions) '((1 45)(2 26)(3 42))))
-  (should (equal (gethash "feature.el" anyins-buffers-positions) '((1 1)(2 67))))
+  (setq anyins-buffers-positions '())
+  ;; if record already exists return nil, t otherwise
+  (should (equal (anyins-record-position '(3 42)) t))
+  (should (equal (anyins-record-position '(2 32)) t))
+  (should (equal (anyins-record-position '(1 22)) t))
+  (should (equal (anyins-record-position '(1 45)) t))
+  (should (equal (anyins-record-position '(2 32)) nil))
+  (should (equal (anyins-record-position '(2 26)) t))
+  (should (equal (anyins-record-position '(3 42)) nil))
+  (should (equal (anyins-record-position '(1 45)) nil))
+  ;; we get an association table with unique positions keeping first entered
+  (should (equal anyins-buffers-positions '((3 42)(2 32)(1 22)(1 45)(2 26))))
   )
 
 (ert-deftest anyins-remove-positions ()
-  (clrhash anyins-buffers-positions)
-  (puthash "file.el" '((1 1)(2 2)(3 3)) anyins-buffers-positions)
-  (puthash "feature.el" '((3 3)(4 4)(5 5)) anyins-buffers-positions)
-  (anyins-remove-positions "feature.el")
+  (setq anyins-buffers-positions '((3 3)(4 4)(5 5)))
+  (anyins-remove-positions)
   ;; delete an entry
-  (should (equal-including-properties (gethash "file.el" anyins-buffers-positions) '((1 1)(2 2)(3 3))))
-  (should (equal-including-properties (gethash "feature.el" anyins-buffers-positions) nil))
+  (should (equal-including-properties anyins-buffers-positions '()))
   ;; try to delete entry already deleted
-  (anyins-remove-positions "feature.el")
-  (should (equal-including-properties (gethash "feature.el" anyins-buffers-positions) nil))
-  )
-
-(ert-deftest anyins-get-positions ()
-  (clrhash anyins-buffers-positions)
-  (puthash "file.el" '((1 1)(2 2)(3 3)) anyins-buffers-positions)
-  (puthash "feature.el" '((3 3)(4 4)(5 5)) anyins-buffers-positions)
-  ;; we get positions from name
-  (should (equal-including-properties (anyins-get-positions "file.el") '((1 1)(2 2)(3 3))))
-  (should (equal-including-properties (anyins-get-positions "feature.el") '((3 3)(4 4)(5 5))))
-  (should (equal-including-properties (anyins-get-positions "whatever") nil))
-  )
-
-(ert-deftest anyins-has-positions ()
-  (clrhash anyins-buffers-positions)
-  (puthash "file.el" '((1 1)(2 2)(3 3)) anyins-buffers-positions)
-  ;; if we have positions it return true, nil otherwise
-  (should (equal-including-properties (anyins-has-positions "file.el") t))
-  (should (equal-including-properties (anyins-has-positions "feature.el") nil))
+  (anyins-remove-positions)
+  (should (equal-including-properties anyins-buffers-positions '()))
   )
 
 (ert-deftest anyins-prepare-content-to-insert ()

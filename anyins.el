@@ -23,36 +23,24 @@
 
 ;;; Code:
 
-(defvar anyins-buffers-positions (make-hash-table :test 'equal)
+(defvar anyins-buffers-positions '()
   "Positions recorded in buffers")
 
-(defun anyins-record-position (position name)
-  "Record cursor line and offset"
-  (let* ((buffer-positions (gethash name anyins-buffers-positions)))
-    (unless buffer-positions
-      (setq buffer-positions ())
+(defun anyins-record-position (position)
+  "Record cursor line and offset, return true if position doesn't exist yet"
+  (let ((previous-length (length anyins-buffers-positions)))
+    (setq anyins-buffers-positions (delete-dups (append anyins-buffers-positions (list position))))
+    (progn
+      (when (/= previous-length (length anyins-buffers-positions))
+        t
+        )
       )
-    (when (assq (car position) buffer-positions)
-      (setq buffer-positions (assq-delete-all (car position) buffer-positions))
-      )
-    (push (list (car position) (cadr position)) buffer-positions)
-    (puthash name (sort buffer-positions (lambda(a b)(< (car a) (car b)))) anyins-buffers-positions)
     )
   )
 
-(defun anyins-has-positions (name)
-  "Check if a buffer has recorded positions"
-  (> (length (anyins-get-positions name)) 0)
-  )
-
-(defun anyins-remove-positions (name)
-  "Delete recorded positions for name"
-  (remhash name anyins-buffers-positions)
-  )
-
-(defun anyins-get-positions (name)
-  "Get recorded cursor positions"
-  (gethash name anyins-buffers-positions)
+(defun anyins-remove-positions ()
+  "Delete recorded positions"
+  (setq anyins-buffers-positions '())
   )
 
 (defun anyins-prepare-content-to-insert (content)
@@ -125,12 +113,11 @@
 
 (defun anyins-insert (content name)
   "Insert content"
-  (let* ((rows (anyins-prepare-content-to-insert content))
-         (positions (anyins-get-positions name)))
-    (if (and positions rows)
+  (let* ((rows (anyins-prepare-content-to-insert content)))
+    (if (and anyins-buffers-positions rows)
         (progn
-          (anyins-insert-at-recorded-positions rows positions)
-          (anyins-remove-positions name))
+          (anyins-insert-at-recorded-positions rows anyins-buffers-positions)
+          (anyins-remove-positions))
       (anyins-insert-from-current-position rows)
       )
     )
