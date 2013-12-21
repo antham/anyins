@@ -23,8 +23,16 @@
 
 ;;; Code:
 
+(defface anyins-recorded-positions
+  '((((background dark)) :background "green" :foreground "white")
+    (((background light)) :background "green" :foreground "white"))
+  "Marker for recorded position" :group 'anyins)
+
 (defvar anyins-buffers-positions '()
   "Positions recorded in buffers")
+
+(defvar anyins-buffers-overlays '()
+  "Overlays recorded in buffers")
 
 (defun anyins-record-position (position)
   "Record cursor line and offset, return true if position doesn't exist yet"
@@ -63,7 +71,17 @@
 
 (defun anyins-record-current-position ()
   "Record current cursor position"
-  (anyins-record-position (anyins-get-current-position) (buffer-name))
+  (when (anyins-record-position (anyins-get-current-position))
+    (anyins-create-overlay (anyins-get-current-position) (point))
+    )
+  )
+
+(defun anyins-create-overlay (position point)
+  "Create an overlay at point"
+  (let ((overlay (make-overlay point (+ 1 point))))
+    (overlay-put overlay 'face 'anyins-recorded-positions)
+    (push overlay anyins-buffers-overlays)
+    )
   )
 
 (defun anyins-goto-or-create-position (position)
