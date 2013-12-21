@@ -20,7 +20,9 @@
  )
 
 (Before
- ;; Before each scenario is run
+ (anyins-mode 0)
+ (setq buffer-read-only nil)
+ (remove-overlays)
  )
 
 (After

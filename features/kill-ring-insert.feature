@@ -24,7 +24,9 @@ Feature: Insert content on several lines from kill-ring
     When I place the cursor after "a fruit"
     Given I start an action chain
     And I press "M-x"
-    And I press "anyins-insert-kill-ring"
+    And I type "anyins-mode"
+    And I press "RET"
+    And I press "k"
     And I execute the action chain
     Then I should see in buffer
     """
@@ -57,7 +59,9 @@ Feature: Insert content on several lines from kill-ring
     When I place the cursor after "category"
     Given I start an action chain
     And I press "M-x"
-    And I press "anyins-insert-kill-ring"
+    And I type "anyins-mode"
+    And I press "RET"
+    And I press "k"
     And I execute the action chain
     Then I should see in buffer
     """
@@ -87,21 +91,21 @@ Feature: Insert content on several lines from kill-ring
     When I place the cursor after "apple is a"
     Given I start an action chain
     And I press "M-x"
-    And I press "anyins-record"
+    And I type "anyins-mode"
+    And I execute the action chain
+    Given I start an action chain
+    And I press "RET"
     And I execute the action chain
     When I place the cursor after "strawberry is a"
     Given I start an action chain
-    And I press "M-x"
-    And I press "anyins-record"
+    And I press "RET"
     And I execute the action chain
     When I place the cursor after "pineapple is a"
     Given I start an action chain
-    And I press "M-x"
-    And I press "anyins-record"
+    And I press "RET"
     And I execute the action chain
     Given I start an action chain
-    And I press "M-x"
-    And I press "anyins-insert-kill-ring"
+    And I press "k"
     And I execute the action chain
     Then I should see in buffer
     """

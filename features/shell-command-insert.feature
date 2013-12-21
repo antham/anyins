@@ -15,8 +15,9 @@ Feature: Insert content on several lines from shell command
     When I go to beginning of buffer
     Given I start an action chain
     And I press "M-x"
-    And I press "anyins-insert-shell-command-result"
+    And I type "anyins-mode"
     And I press "RET"
+    And I press "s"
     And I type "seq 1 10|xargs -I {} echo {}'.'"
     And I execute the action chain
     Then I should see in buffer
@@ -44,8 +45,9 @@ Feature: Insert content on several lines from shell command
     When I go to beginning of buffer
     Given I start an action chain
     And I press "M-x"
-    And I press "anyins-insert-shell-command-result"
+    And I type "anyins-mode"
     And I press "RET"
+    And I press "s"
     And I type "seq 1 3|xargs -I {} echo {}'.'"
     And I execute the action chain
     Then I should see in buffer
@@ -70,8 +72,9 @@ Feature: Insert content on several lines from shell command
     When I go to beginning of buffer
     Given I start an action chain
     And I press "M-x"
-    And I press "anyins-insert-shell-command-result"
+    And I type "anyins-mode"
     And I press "RET"
+    And I press "s"
     And I type "seq 1 10|xargs -I {} echo {}'.'"
     And I execute the action chain
     Then I should see in buffer
@@ -91,35 +94,32 @@ Feature: Insert content on several lines from shell command
     6998 Accumsan Avenue Zambia
     205-1886 Eu Rd. United States Minor Outlying Islands
     """
-    When I place the cursor before "St.Gabon"
     Given I start an action chain
     And I press "M-x"
-    And I press "anyins-record"
+    And I press "anyins-mode"
+    And I execute the action chain
+    When I place the cursor before "St.Gabon"
+    Given I start an action chain
+    And I press "RET"
     And I execute the action chain
     When I place the cursor before "Cook Islands"
     Given I start an action chain
-    And I press "M-x"
-    And I press "anyins-record"
+    And I press "RET"
     And I execute the action chain
     When I place the cursor before "Niue"
     Given I start an action chain
-    And I press "M-x"
-    And I press "anyins-record"
+    And I press "RET"
     And I execute the action chain
     When I place the cursor before "Zambia"
     Given I start an action chain
-    And I press "M-x"
-    And I press "anyins-record"
+    And I press "RET"
     And I execute the action chain
     When I place the cursor before "United States Minor Outlying Islands"
     Given I start an action chain
-    And I press "M-x"
-    And I press "anyins-record"
+    And I press "RET"
     And I execute the action chain
     Given I start an action chain
-    And I press "M-x"
-    And I press "anyins-insert-shell-command-result"
-    And I press "RET"
+    And I press "s"
     And I type "yes '| Country : '|head -n 10"
     And I execute the action chain
     Then I should see in buffer

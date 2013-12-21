@@ -138,7 +138,7 @@
     )
   )
 
-(defun anyins-insert (content name)
+(defun anyins-insert (content)
   "Insert content"
   (let* ((rows (anyins-prepare-content-to-insert content)))
     (if (and anyins-buffers-positions rows)
@@ -150,25 +150,44 @@
     )
   )
 
-;;;###autoload
-(defun anyins-record ()
-  "Record current cursor position"
-  (interactive)
-  (anyins-record-current-position)
+(defun anyins-clear()
+  "Clear everything recorded for this buffer"
+  (setq buffer-read-only nil)
+  (anyins-delete-overlays)
+  (anyins-remove-positions)
+  (anyins-mode 0)
   )
 
 ;;;###autoload
-(defun anyins-insert-kill-ring ()
-  "Insert content of kill-ring at chosen places"
-  (interactive)
-  (anyins-insert (car kill-ring) (buffer-name))
-  )
-
-;;;###autoload
-(defun anyins-insert-shell-command-result (command)
-  "Insert content of shell command result at chosen places"
-  (interactive "Mshell command :")
-  (anyins-insert (shell-command-to-string command) (buffer-name))
+(define-minor-mode anyins-mode
+  "Anyins minor mode"
+  :lighter " Anyins"
+  :keymap (let ((map (make-sparse-keymap)))
+            (define-key map (kbd "C-g") '(lambda()
+                                           (interactive)
+                                           (anyins-clear)))
+            (define-key map (kbd "RET") '(lambda()
+                                           (interactive)
+                                           (anyins-record-current-position)))
+            (define-key map (kbd "k") '(lambda()
+                                         (interactive)
+                                         (setq buffer-read-only nil)
+                                         (anyins-insert (car kill-ring))
+                                         (anyins-clear)))
+            (define-key map (kbd "s") '(lambda()
+                                         (interactive
+                                          (let ((command (read-string "shell command : ")))
+                                            (setq buffer-read-only nil)
+                                            (anyins-insert (shell-command-to-string command))
+                                            (anyins-clear)))))
+            map)
+  (if anyins-mode
+      (progn
+        (setq buffer-read-only t)
+        (make-variable-buffer-local 'anyins-buffers-overlays)
+        (make-variable-buffer-local 'anyins-buffers-positions)
+        )
+      )
   )
 
 (provide 'anyins)
