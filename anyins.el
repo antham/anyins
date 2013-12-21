@@ -84,6 +84,15 @@
     )
   )
 
+(defun anyins-delete-overlays ()
+  "Delete overlays"
+  (when anyins-buffers-overlays
+    (dolist (overlay anyins-buffers-overlays)
+      (delete-overlay overlay))
+    (setq anyins-buffers-overlays '())
+    )
+  )
+
 (defun anyins-goto-or-create-position (position)
   "Create position if it doesn't exist, filling with space to do so"
   (let* ((end-position nil))
