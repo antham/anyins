@@ -1,4 +1,4 @@
-;;; anyins.el --- Enhance rectangular insert
+;;; anyins.el --- Insert anything from shell command or kill-ring
 
 ;; Copyright (C) 2013 Anthony HAMON
 
