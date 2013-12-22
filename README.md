@@ -2,6 +2,8 @@
 
 Insert content either from kill-ring or from shell command result at marked point or vertically like rectangular do.
 
+[Look at demonstration video](http://www.dailymotion.com/video/x18pkp8_anyins-emacs-plugin_tech)
+
 ### Install
 
 You can pull it from here and you have to add in your emacs config :
