@@ -4,6 +4,7 @@
 
 ;; Author: Anthony HAMON <hamon.anth@gmail.com>
 ;; URL: http://github.com/antham/anyins
+;; Version: 0.1.0
 ;; Keywords: insert, rectangular
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -20,7 +21,12 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-
+;;
+;; Insert content either from kill-ring or from shell command result at marked
+;; point or vertically like rectangular do.
+;;
+;; Have a look to README at https://github.com/antham/anyins to have more information
+;;
 ;;; Code:
 
 (defface anyins-recorded-positions
