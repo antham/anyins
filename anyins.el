@@ -1,4 +1,4 @@
-;;; anyins.el --- Insert anything from shell command or kill-ring
+;;; anyins.el --- Insert content at multiple places from shell command or kill-ring
 
 ;; Copyright (C) 2013 Anthony HAMON
 
