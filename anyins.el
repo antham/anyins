@@ -30,95 +30,83 @@
 ;;; Code:
 
 (defface anyins-recorded-positions
-  '((((background dark)) :background "green" :foreground "white")
-    (((background light)) :background "green" :foreground "white"))
-  "Marker for recorded position" :group 'anyins)
+  '((((background dark)) :background "green"
+     :foreground "white")
+    (((background light)) :background "green"
+     :foreground "white"))
+  "Marker for recorded position"
+  :group 'anyins)
 
 (defvar anyins-buffers-positions '()
-  "Positions recorded in buffers")
+  "Positions recorded in buffers.")
 
 (defvar anyins-buffers-overlays '()
-  "Overlays recorded in buffers")
+  "Overlays recorded in buffers.")
 
 (defun anyins-record-position (position)
-  "Record cursor line and offset, return true if position doesn't exist yet"
+  "Record cursor line and offset, return true if POSITION doesn't exist yet."
   (let ((previous-length (length anyins-buffers-positions)))
     (setq anyins-buffers-positions (delete-dups (append anyins-buffers-positions (list position))))
     (progn
       (when (/= previous-length (length anyins-buffers-positions))
-        t
-        )
-      )
-    )
-  )
+        t))))
 
 (defun anyins-remove-positions ()
-  "Delete recorded positions"
-  (setq anyins-buffers-positions '())
-  )
+  "Delete recorded positions."
+  (setq anyins-buffers-positions '()))
 
 (defun anyins-prepare-content-to-insert (content)
-  "Transform string to list to be inserted"
+  "Transform CONTENT to list to be inserted."
   (when content
-    (split-string content "\n")
-    )
-  )
+    (split-string content "\n")))
 
 (defun anyins-goto-position (position)
-  "Move cursor to line at offset"
+  "Move cursor at POSITION."
   (goto-line (car position))
-  (goto-char (+ (line-beginning-position) (cadr position)))
-  )
+  (goto-char (+ (line-beginning-position)
+                (cadr position))))
 
 (defun anyins-get-current-position ()
-  "Get current cursor position"
-  (list (line-number-at-pos (point)) (- (point) (line-beginning-position)))
-  )
+  "Get current cursor position."
+  (list (line-number-at-pos (point))
+        (- (point)
+           (line-beginning-position))))
 
 (defun anyins-record-current-position ()
-  "Record current cursor position"
+  "Record current cursor position."
   (when (anyins-record-position (anyins-get-current-position))
-    (anyins-create-overlay (point))
-    )
-  )
+    (anyins-create-overlay (point))))
 
 (defun anyins-create-overlay (point)
   "Create an overlay at POINT."
   (let ((overlay (make-overlay point (+ 1 point))))
     (overlay-put overlay 'face 'anyins-recorded-positions)
-    (push overlay anyins-buffers-overlays)
-    )
-  )
+    (push overlay anyins-buffers-overlays)))
 
 (defun anyins-delete-overlays ()
-  "Delete overlays"
+  "Delete overlays."
   (when anyins-buffers-overlays
     (dolist (overlay anyins-buffers-overlays)
       (delete-overlay overlay))
-    (setq anyins-buffers-overlays '())
-    )
-  )
+    (setq anyins-buffers-overlays '())))
 
 (defun anyins-goto-or-create-position (position)
-  "Create position if it doesn't exist, filling with space to do so"
+  "Create POSITION if it doesn't exist, filling with space to do so."
   (let* ((end-position nil))
     (goto-line (car position))
     (end-of-line)
     (setq end-position (anyins-get-current-position))
-    (if (<= (cadr position) (cadr end-position))
+    (if (<= (cadr position)
+            (cadr end-position))
         (anyins-goto-position position)
       (progn
-        (while (> (cadr position) (cadr end-position))
+        (while (> (cadr position)
+                  (cadr end-position))
           (insert " ")
-          (setq end-position (anyins-get-current-position))
-          )
-        )
-      )
-    )
-  )
+          (setq end-position (anyins-get-current-position)))))))
 
 (defun anyins-compute-position-offset (rows positions)
-  "Compute offset for each position"
+  "Compute offset for ROWS linked to POSITIONS."
   (let ((ordered-positions nil)
         (computed-positions nil))
     (dotimes (i (length positions))
@@ -126,115 +114,99 @@
              (position (nth i positions))
              (line (car position))
              (offset (cadr position))
-             (row-list (cadr (assoc line ordered-positions)))
-             )
+             (row-list (cadr (assoc line ordered-positions))))
         (when row
           (setq ordered-positions (assq-delete-all line ordered-positions))
           (setq row-list (cons (list offset row) row-list))
-          (setq row-list (sort row-list (lambda (a b)
-                                          (and (< (car a) (car b))))))
-          (setq ordered-positions (append ordered-positions (list (list line row-list))))
-          )
-        )
-      )
-    (setq ordered-positions (sort ordered-positions (lambda (a b)
-                                                      (and (< (car a) (car b))))))
+          (setq row-list (sort row-list
+                               (lambda (a b)
+                                 (and (< (car a)
+                                         (car b))))))
+          (setq ordered-positions (append ordered-positions (list (list line row-list)))))))
+    (setq ordered-positions (sort ordered-positions
+                                  (lambda (a b)
+                                    (and (< (car a)
+                                            (car b))))))
     (dolist (row-list ordered-positions)
       (let ((offset 0)
             (line (car row-list))
             (row-list-result))
         (dolist (row (cadr row-list))
-          (setq row-list-result (append row-list-result (list (list (+ (car row) offset) (cadr row)))))
-          (setq offset (+ offset (length (cadr row))))
-          )
-        (setq computed-positions (append computed-positions (list (list line row-list-result))))
-        )
-      )
-    (progn computed-positions)
-    )
-  )
+          (setq row-list-result (append row-list-result (list (list (+ (car row) offset)
+                                                                    (cadr row)))))
+          (setq offset (+ offset (length (cadr row)))))
+        (setq computed-positions (append computed-positions (list (list line row-list-result))))))
+    (progn
+      computed-positions)))
 
 (defun anyins-insert-at-recorded-positions (rows positions)
-  "Insert content at each recorded position"
+  "Insert ROWS at recorded POSITIONS."
   (let ((computed-positions (anyins-compute-position-offset rows positions)))
     (dolist (row-list computed-positions)
       (let ((line (car row-list)))
         (dolist (row (cadr row-list))
           (anyins-goto-position (list line (car row)))
-          (insert (cadr row))
-          )
-        )
-      )
-    )
-  )
+          (insert (cadr row)))))))
 
 (defun anyins-insert-from-current-position (rows)
-  "Insert content from current position"
+  "Insert ROWS from current position."
   (let* ((current-position (anyins-get-current-position))
          (line (car current-position)))
     (while (>= (line-number-at-pos (point-max)) line)
       (anyins-goto-or-create-position (list line (cadr current-position)))
       (let ((data (pop rows)))
         (when (char-or-string-p data)
-          (insert data)
-          )
-        )
-      (setq line (+ 1 line))
-      )
-    )
-  )
+          (insert data)))
+      (setq line (+ 1 line)))))
 
 (defun anyins-insert (content)
-  "Insert content"
+  "Insert CONTENT in buffer."
   (let* ((rows (anyins-prepare-content-to-insert content)))
-    (if (and anyins-buffers-positions rows)
+    (if (and anyins-buffers-positions
+             rows)
         (progn
           (anyins-insert-at-recorded-positions rows anyins-buffers-positions)
           (anyins-remove-positions))
-      (anyins-insert-from-current-position rows)
-      )
-    )
-  )
+      (anyins-insert-from-current-position rows))))
 
 (defun anyins-clear()
-  "Clear everything recorded for this buffer"
+  "Clear everything recorded for this buffer."
   (setq buffer-read-only nil)
   (anyins-delete-overlays)
   (anyins-remove-positions)
-  (anyins-mode 0)
-  )
+  (anyins-mode 0))
 
 ;;;###autoload
-(define-minor-mode anyins-mode
-  "Anyins minor mode"
+(define-minor-mode anyins-mode "Anyins minor mode."
   :lighter " Anyins"
   :keymap (let ((map (make-sparse-keymap)))
-            (define-key map (kbd "C-g") '(lambda()
-                                           (interactive)
-                                           (anyins-clear)))
-            (define-key map (kbd "RET") '(lambda()
-                                           (interactive)
-                                           (anyins-record-current-position)))
-            (define-key map (kbd "k") '(lambda()
-                                         (interactive)
-                                         (setq buffer-read-only nil)
-                                         (anyins-insert (car kill-ring))
-                                         (anyins-clear)))
-            (define-key map (kbd "s") '(lambda()
-                                         (interactive
-                                          (let ((command (read-string "shell command : ")))
-                                            (setq buffer-read-only nil)
-                                            (anyins-insert (shell-command-to-string command))
-                                            (anyins-clear)))))
+            (define-key map (kbd "C-g")
+              '(lambda()
+                 (interactive)
+                 (anyins-clear)))
+            (define-key map (kbd "RET")
+              '(lambda()
+                 (interactive)
+                 (anyins-record-current-position)))
+            (define-key map (kbd "k")
+              '(lambda()
+                 (interactive)
+                 (setq buffer-read-only nil)
+                 (anyins-insert (car kill-ring))
+                 (anyins-clear)))
+            (define-key map (kbd "s")
+              '(lambda()
+                 (interactive
+                  (let ((command (read-string "shell command : ")))
+                    (setq buffer-read-only nil)
+                    (anyins-insert (shell-command-to-string command))
+                    (anyins-clear)))))
             map)
   (if anyins-mode
       (progn
         (setq buffer-read-only t)
         (make-variable-buffer-local 'anyins-buffers-overlays)
-        (make-variable-buffer-local 'anyins-buffers-positions)
-        )
-    )
-  )
+        (make-variable-buffer-local 'anyins-buffers-positions))))
 
 (provide 'anyins)
 
