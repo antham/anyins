@@ -78,12 +78,12 @@
 (defun anyins-record-current-position ()
   "Record current cursor position"
   (when (anyins-record-position (anyins-get-current-position))
-    (anyins-create-overlay (anyins-get-current-position) (point))
+    (anyins-create-overlay (point))
     )
   )
 
-(defun anyins-create-overlay (position point)
-  "Create an overlay at point"
+(defun anyins-create-overlay (point)
+  "Create an overlay at POINT."
   (let ((overlay (make-overlay point (+ 1 point))))
     (overlay-put overlay 'face 'anyins-recorded-positions)
     (push overlay anyins-buffers-overlays)
