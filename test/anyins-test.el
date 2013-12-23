@@ -46,6 +46,35 @@
   (should (equal-including-properties anyins-buffers-positions '()))
   )
 
+(ert-deftest anyins-compute-position-offset ()
+  (let ((rows '("Lorem ipsum dolor sit" "amet, consectetur adipiscing elit." "Vivamus non erat laoreet," "tincidunt neque" "et, tempus" "nulla. Fusce" "iaculis eros."))
+        (positions '((1 2) (3 6) (2 3) (1 1) (2 1) (3 1) (2 2))))
+    ;; we get an association list with line at first followed by an association list for buffer line with data to insert and computed
+    ;; position where to insert this data
+    (should (equal-including-properties (anyins-compute-position-offset rows positions) '((1 ((1 "tincidunt neque")
+                                                                                                (17 "Lorem ipsum dolor sit")))
+                                                                                            (2 ((1 "et, tempus")
+                                                                                                (12 "iaculis eros.")
+                                                                                                (26 "Vivamus non erat laoreet,")))
+                                                                                            (3 ((1 "nulla. Fusce")
+                                                                                                (18 "amet, consectetur adipiscing elit."))))))
+    )
+  ;; we get much rows than positions
+  (let ((rows '("Lorem ipsum dolor sit" "amet, consectetur adipiscing elit." "Vivamus non erat laoreet," "tincidunt neque" "et, tempus" "nulla. Fusce" "iaculis eros."))
+        (positions '((1 2) (3 6) (2 3))))
+    (should (equal-including-properties (anyins-compute-position-offset rows positions) '((1 ((2 "Lorem ipsum dolor sit")))
+                                                                                          (2 ((3 "Vivamus non erat laoreet,")))
+                                                                                          (3 ((6 "amet, consectetur adipiscing elit."))))))
+    )
+  ;; we get much positions than rows
+  (let ((rows '("Lorem ipsum dolor sit" "amet, consectetur adipiscing elit." "Vivamus non erat laoreet,"))
+        (positions '((1 2) (3 6) (2 3) (3 5) (10 8) (2 7))))
+    (should (equal-including-properties (anyins-compute-position-offset rows positions) '((1 ((2 "Lorem ipsum dolor sit")))
+                                                                                          (2 ((3 "Vivamus non erat laoreet,")))
+                                                                                          (3 ((6 "amet, consectetur adipiscing elit."))))))
+    )
+  )
+
 (ert-deftest anyins-prepare-content-to-insert ()
   ;; text is splitted at new line
   (should (equal-including-properties (anyins-prepare-content-to-insert "hello world\nhello world\nhello world") '("hello world" "hello world" "hello world")))

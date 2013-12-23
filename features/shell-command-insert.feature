@@ -83,7 +83,7 @@ Feature: Insert content on several lines from shell command
     2.fruit
     """
 
-  Scenario: Insert output from shell command output where mark are defined
+  Scenario: Insert output from shell command where mark are defined
     Given I switch to buffer "list-of-things"
     Given I clear the buffer
     Given the following text in buffer:
@@ -131,3 +131,62 @@ Feature: Insert content on several lines from shell command
     205-1886 Eu Rd. | Country : United States Minor Outlying Islands
     """
 
+  Scenario: Insert output from shell command at several points on several lines
+    Given I switch to buffer "list-of-things"
+    Given I clear the buffer
+    Given the following text in buffer:
+    """
+    one two three
+    four five six
+    seven eight nine
+    """
+    Given I start an action chain
+    And I press "M-x"
+    And I type "anyins-mode"
+    And I execute the action chain
+    When I place the cursor before "one"
+    Given I start an action chain
+    And I press "RET"
+    And I execute the action chain
+    When I place the cursor before "two"
+    Given I start an action chain
+    And I press "RET"
+    And I execute the action chain
+    When I place the cursor before "three"
+    Given I start an action chain
+    And I press "RET"
+    And I execute the action chain
+    When I place the cursor before "four"
+    Given I start an action chain
+    And I press "RET"
+    And I execute the action chain
+    When I place the cursor before "five"
+    Given I start an action chain
+    And I press "RET"
+    And I execute the action chain
+    When I place the cursor before "six"
+    Given I start an action chain
+    And I press "RET"
+    And I execute the action chain
+    When I place the cursor before "seven"
+    Given I start an action chain
+    And I press "RET"
+    And I execute the action chain
+    When I place the cursor before "eight"
+    Given I start an action chain
+    And I press "RET"
+    And I execute the action chain
+    When I place the cursor before "nine"
+    Given I start an action chain
+    And I press "RET"
+    And I execute the action chain
+    Given I start an action chain
+    And I press "s"
+    And I type "seq 1 9|xargs -I {} echo '{}.'"
+    And I execute the action chain
+    Then I should see in buffer
+    """
+    1.one 2.two 3.three
+    4.four 5.five 6.six
+    7.seven 8.eight 9.nine
+    """

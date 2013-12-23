@@ -115,3 +115,64 @@ Feature: Insert content on several lines from kill-ring
     cauliflower is a vegetable
     pineapple is a spiky fruit
     """
+
+  Scenario: Copy a region and insert it on at several points on several lines
+    Given I switch to buffer "list-of-things"
+    Given I clear the buffer
+    Given the following text in buffer:
+    """
+    one three five
+    seven nine eleven
+    thirteen fifteen
+    """
+    Given the following text in kill-ring:
+    """
+     two
+     four
+     six
+     eight
+     ten
+     twelve
+     fourteen
+    """
+    Given I start an action chain
+    And I press "M-x"
+    And I type "anyins-mode"
+    And I execute the action chain
+    When I place the cursor after "one"
+    Given I start an action chain
+    And I press "RET"
+    And I execute the action chain
+    When I place the cursor after "three"
+    Given I start an action chain
+    And I press "RET"
+    And I execute the action chain
+    When I place the cursor after "five"
+    Given I start an action chain
+    And I press "RET"
+    And I execute the action chain
+    When I place the cursor after "seven"
+    Given I start an action chain
+    And I press "RET"
+    And I execute the action chain
+    When I place the cursor after "nine"
+    Given I start an action chain
+    And I press "RET"
+    And I execute the action chain
+    When I place the cursor after "eleven"
+    Given I start an action chain
+    And I press "RET"
+    And I execute the action chain
+    When I place the cursor after "thirteen"
+    Given I start an action chain
+    And I press "RET"
+    And I execute the action chain
+    Given I start an action chain
+    And I press "k"
+    And I execute the action chain
+    Then I should see in buffer
+    """
+    one two three four five six
+    seven eight nine ten eleven twelve
+    thirteen fourteen fifteen
+    """
