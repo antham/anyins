@@ -39,9 +39,11 @@
 
 (defvar anyins-buffers-positions '()
   "Positions recorded in buffers.")
+(make-variable-buffer-local 'anyins-buffers-positions)
 
 (defvar anyins-buffers-overlays '()
   "Overlays recorded in buffers.")
+(make-variable-buffer-local 'anyins-buffers-overlays)
 
 (defun anyins-record-position (position)
   "Record cursor line and offset, return true if POSITION doesn't exist yet."
@@ -74,6 +76,7 @@
 
 (defun anyins-record-current-position ()
   "Record current cursor position."
+  (interactive)
   (when (anyins-record-position (anyins-get-current-position))
     (anyins-create-overlay (point))))
 
@@ -171,42 +174,40 @@
 
 (defun anyins-clear()
   "Clear everything recorded for this buffer."
+  (interactive)
   (setq buffer-read-only nil)
   (anyins-delete-overlays)
   (anyins-remove-positions)
   (anyins-mode 0))
 
+(defun anyins-yank ()
+  "Yank the contents of the kill ring."
+  (interactive)
+  (setq buffer-read-only nil)
+  (anyins-insert (car kill-ring))
+  (anyins-clear))
+
+(defun anyins-insert-command (command)
+  "Insert the output of COMMAND."
+  (interactive "sShell command: ")
+  (setq buffer-read-only nil)
+  (anyins-insert (shell-command-to-string command))
+  (anyins-clear))
+
+(defvar anyins-mode-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "C-g") 'anyins-clear)
+    (define-key map (kbd "RET") 'anyins-record-current-position)
+    (define-key map (kbd "y") 'anyins-yank)
+    (define-key map (kbd "!") 'anyins-insert-command)
+    map)
+  "Keymap for `anyins-mode'.")
+
 ;;;###autoload
 (define-minor-mode anyins-mode "Anyins minor mode."
   :lighter " Anyins"
-  :keymap (let ((map (make-sparse-keymap)))
-            (define-key map (kbd "C-g")
-              '(lambda()
-                 (interactive)
-                 (anyins-clear)))
-            (define-key map (kbd "RET")
-              '(lambda()
-                 (interactive)
-                 (anyins-record-current-position)))
-            (define-key map (kbd "k")
-              '(lambda()
-                 (interactive)
-                 (setq buffer-read-only nil)
-                 (anyins-insert (car kill-ring))
-                 (anyins-clear)))
-            (define-key map (kbd "s")
-              '(lambda()
-                 (interactive
-                  (let ((command (read-string "shell command : ")))
-                    (setq buffer-read-only nil)
-                    (anyins-insert (shell-command-to-string command))
-                    (anyins-clear)))))
-            map)
-  (if anyins-mode
-      (progn
-        (setq buffer-read-only t)
-        (make-variable-buffer-local 'anyins-buffers-overlays)
-        (make-variable-buffer-local 'anyins-buffers-positions))))
+  (when anyins-mode
+    (setq buffer-read-only t)))
 
 (provide 'anyins)
 

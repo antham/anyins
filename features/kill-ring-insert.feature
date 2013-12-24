@@ -26,7 +26,7 @@ Feature: Insert content on several lines from kill-ring
     And I press "M-x"
     And I type "anyins-mode"
     And I press "RET"
-    And I press "k"
+    And I press "y"
     And I execute the action chain
     Then I should see in buffer
     """
@@ -61,7 +61,7 @@ Feature: Insert content on several lines from kill-ring
     And I press "M-x"
     And I type "anyins-mode"
     And I press "RET"
-    And I press "k"
+    And I press "y"
     And I execute the action chain
     Then I should see in buffer
     """
@@ -105,7 +105,7 @@ Feature: Insert content on several lines from kill-ring
     And I press "RET"
     And I execute the action chain
     Given I start an action chain
-    And I press "k"
+    And I press "y"
     And I execute the action chain
     Then I should see in buffer
     """
@@ -168,7 +168,7 @@ Feature: Insert content on several lines from kill-ring
     And I press "RET"
     And I execute the action chain
     Given I start an action chain
-    And I press "k"
+    And I press "y"
     And I execute the action chain
     Then I should see in buffer
     """

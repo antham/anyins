@@ -17,7 +17,7 @@ Feature: Insert content on several lines from shell command
     And I press "M-x"
     And I type "anyins-mode"
     And I press "RET"
-    And I press "s"
+    And I press "!"
     And I type "seq 1 10|xargs -I {} echo {}'.'"
     And I execute the action chain
     Then I should see in buffer
@@ -47,7 +47,7 @@ Feature: Insert content on several lines from shell command
     And I press "M-x"
     And I type "anyins-mode"
     And I press "RET"
-    And I press "s"
+    And I press "!"
     And I type "seq 1 3|xargs -I {} echo {}'.'"
     And I execute the action chain
     Then I should see in buffer
@@ -74,7 +74,7 @@ Feature: Insert content on several lines from shell command
     And I press "M-x"
     And I type "anyins-mode"
     And I press "RET"
-    And I press "s"
+    And I press "!"
     And I type "seq 1 10|xargs -I {} echo {}'.'"
     And I execute the action chain
     Then I should see in buffer
@@ -119,7 +119,7 @@ Feature: Insert content on several lines from shell command
     And I press "RET"
     And I execute the action chain
     Given I start an action chain
-    And I press "s"
+    And I press "!"
     And I type "yes '| Country : '|head -n 10"
     And I execute the action chain
     Then I should see in buffer
@@ -181,7 +181,7 @@ Feature: Insert content on several lines from shell command
     And I press "RET"
     And I execute the action chain
     Given I start an action chain
-    And I press "s"
+    And I press "!"
     And I type "seq 1 9|xargs -I {} echo '{}.'"
     And I execute the action chain
     Then I should see in buffer
