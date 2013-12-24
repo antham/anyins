@@ -6,7 +6,11 @@ Insert content either from kill-ring or from shell command result at marked poin
 
 ### Install
 
-You can pull it from here and you have to add in your emacs config :
+You can use melpa:
+
+    M-x package-install RET anyins
+
+or you can pull it from here and you have to add in your emacs config :
 
 ```elisp
 (add-to-list 'load-path "/path/to/anyins")
