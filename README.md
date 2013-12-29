@@ -25,7 +25,7 @@ You can map `anyins-mode` command to key to start anyins-mode easily :
 (global-set-key (kbd "C-c a") 'anyins-mode)
 ```
 
-When you turn anyins-mode on, you can press <kbd>RET</kbd> to mark point in buffer where you want to insert some contents. After that press <kbd>!</kbd> to insert result from a shell command or press <kbd>y</kbd> to insert last entry in kill-ring. <kbd>C-g</kbd> will stop anyins-mode leaving everything untouched.
+When you turn anyins-mode on, you can press <kbd>RET</kbd> to mark point in buffer where you want to insert some contents. After that press <kbd>!</kbd> to insert result from a shell command or press <kbd>y</kbd> to insert last entry in kill-ring. <kbd>q</kbd> will stop anyins-mode leaving everything untouched.
 
 Newline is used as delimitor to split content to insert and content is inserted in same order of recording.
 
@@ -36,4 +36,4 @@ Keybinding         | Description
 <kbd>RET</kbd>     | Mark current point in buffer.
 <kbd>y</kbd>       | Insert last entry from kill-ring.
 <kbd>!</kbd>       | Insert shell command result.
-<kbd>C-g</kbd>     | Abort anyins-mode.
+<kbd>q</kbd>       | Abort anyins-mode.

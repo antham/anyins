@@ -172,12 +172,21 @@
           (anyins-remove-positions))
       (anyins-insert-from-current-position rows))))
 
-(defun anyins-clear()
-  "Clear everything recorded for this buffer."
-  (interactive)
+(defun anyins-turn-on-mode ()
+  "Turn on anyins mode."
+  (setq buffer-read-only t)
+  )
+
+(defun anyins-turn-off-mode ()
+  "Turn off anyins mode."
   (setq buffer-read-only nil)
   (anyins-delete-overlays)
   (anyins-remove-positions)
+  )
+
+(defun anyins-disable-mode ()
+  "Disable anyins mode."
+  (interactive)
   (anyins-mode 0))
 
 (defun anyins-yank ()
@@ -185,29 +194,32 @@
   (interactive)
   (setq buffer-read-only nil)
   (anyins-insert (car kill-ring))
-  (anyins-clear))
+  (anyins-mode 0))
 
 (defun anyins-insert-command (command)
   "Insert the output of COMMAND."
   (interactive "sShell command: ")
   (setq buffer-read-only nil)
   (anyins-insert (shell-command-to-string command))
-  (anyins-clear))
+  (anyins-mode 0))
 
 (defvar anyins-mode-map
   (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "C-g") 'anyins-clear)
+    (define-key map (kbd "q")   'anyins-disable-mode)
     (define-key map (kbd "RET") 'anyins-record-current-position)
-    (define-key map (kbd "y") 'anyins-yank)
-    (define-key map (kbd "!") 'anyins-insert-command)
+    (define-key map (kbd "y")   'anyins-yank)
+    (define-key map (kbd "!")   'anyins-insert-command)
     map)
-  "Keymap for `anyins-mode'.")
+  "Keymap for `anyins-mode`.")
 
 ;;;###autoload
 (define-minor-mode anyins-mode "Anyins minor mode."
   :lighter " Anyins"
-  (when anyins-mode
-    (setq buffer-read-only t)))
+  (if anyins-mode
+      (anyins-turn-on-mode)
+    (anyins-turn-off-mode))
+  (message "Anyins mode %s"
+           (if anyins-mode "enabled" "disabled")))
 
 (provide 'anyins)
 
