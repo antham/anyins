@@ -1,4 +1,4 @@
-# Anyins [![Build Status](https://travis-ci.org/antham/anyins.png?branch=master)](https://travis-ci.org/antham/anyins)
+# Anyins [![Build Status](https://travis-ci.org/antham/anyins.png?branch=master)](https://travis-ci.org/antham/anyins) [![MELPA](http://melpa.org/packages/anyins-badge.svg)](http://melpa.org/#/anyins)
 
 Insert content either from kill-ring or from shell command result at marked point or vertically like rectangular do.
 
