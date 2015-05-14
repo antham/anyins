@@ -2,7 +2,7 @@
 
 Insert content either from kill-ring or from shell command result at marked point or vertically like rectangular do.
 
-[Look at demonstration video](http://www.dailymotion.com/video/x18qqzc_anyins-emacs-plugin_tech)
+![](https://antham.github.io/anyins/anyins.gif)
 
 ### Install
 
